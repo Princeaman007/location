@@ -4,7 +4,6 @@ const sendEmail = async (options) => {
   let transporter;
 
   if (process.env.EMAIL_SERVICE === 'sendgrid') {
-    // Configuration SendGrid
     transporter = nodemailer.createTransport({
       service: 'SendGrid',
       auth: {
@@ -13,15 +12,21 @@ const sendEmail = async (options) => {
       },
     });
   } else {
-    // Configuration SMTP (Gmail, etc.)
     transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
-      port: process.env.SMTP_PORT,
-      secure: false, // true for 465, false for other ports
+      port: parseInt(process.env.SMTP_PORT, 10) || 587,
+      secure: parseInt(process.env.SMTP_PORT, 10) === 465, // true only for port 465
+      requireTLS: true,
       auth: {
         user: process.env.SMTP_EMAIL,
         pass: process.env.SMTP_PASSWORD,
       },
+      tls: {
+        rejectUnauthorized: false, // needed for some hosting providers
+      },
+      connectionTimeout: 10000, // 10 seconds
+      greetingTimeout: 10000,
+      socketTimeout: 15000,
     });
   }
 
@@ -33,8 +38,9 @@ const sendEmail = async (options) => {
   };
 
   const info = await transporter.sendMail(message);
-
-  console.log('Message sent: %s', info.messageId);
+  console.log('Email envoyé:', info.messageId, '→', options.email);
+  return info;
 };
 
 export default sendEmail;
+

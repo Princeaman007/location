@@ -304,10 +304,11 @@ export const forgotPassword = async (req, res) => {
       user.resetPasswordExpire = undefined;
       await user.save();
 
-      console.error('Erreur envoi email:', error);
+      console.error('Erreur envoi email:', error.message || error);
       return res.status(500).json({
         success: false,
         message: 'Erreur lors de l\'envoi de l\'email',
+        detail: process.env.NODE_ENV !== 'production' ? error.message : undefined,
       });
     }
   } catch (error) {
