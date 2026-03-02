@@ -120,6 +120,7 @@ export const login = async (req, res) => {
 
     // Vérifier si l'email a été confirmé
     if (!user.isEmailVerified) {
+      console.log('Login bloqué - email non vérifié pour:', user.email, '| isEmailVerified:', user.isEmailVerified);
       return res.status(403).json({
         success: false,
         message: 'Veuillez vérifier votre email avant de vous connecter. Vérifiez votre boîte mail.',
@@ -380,7 +381,11 @@ export const verifyEmail = async (req, res) => {
       .update(req.params.token)
       .digest('hex');
 
+    console.log('Verification token hash:', emailVerificationToken);
+
     const user = await User.findOne({ emailVerificationToken });
+
+    console.log('User found:', user ? user.email : 'NOT FOUND');
 
     if (!user) {
       return res.status(400).json({
@@ -389,10 +394,12 @@ export const verifyEmail = async (req, res) => {
       });
     }
 
-    await User.updateOne(
-      { _id: user._id },
-      { $set: { isEmailVerified: true }, $unset: { emailVerificationToken: '' } }
-    );
+    // Same pattern as forgotPassword which works
+    user.isEmailVerified = true;
+    user.emailVerificationToken = undefined;
+    await user.save({ validateBeforeSave: false });
+
+    console.log('isEmailVerified after save:', user.isEmailVerified);
 
     res.status(200).json({
       success: true,
