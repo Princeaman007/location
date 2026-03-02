@@ -221,7 +221,7 @@ export const createReservation = async (req, res) => {
         <ul>
           <li><strong>Code de réservation :</strong> ${reservation.code}</li>
           <li><strong>Véhicule :</strong> ${populatedReservation.vehicle.brand} ${populatedReservation.vehicle.model} (${populatedReservation.vehicle.year})</li>
-          <li><strong>Type de service :</strong> ${serviceType === 'self-drive' ? 'Sans chauffeur' : 'Avec chauffeur'}</li>
+          <li><strong>Type de service :</strong> ${serviceType === 'avec-chauffeur' ? 'Avec chauffeur' : 'Sans chauffeur'}</li>
           <li><strong>Date de début :</strong> ${startDateFormatted}</li>
           <li><strong>Date de fin :</strong> ${endDateFormatted}</li>
           <li><strong>Durée :</strong> ${duration} jour(s)</li>
@@ -264,7 +264,7 @@ export const createReservation = async (req, res) => {
         <ul>
           <li><strong>Code :</strong> ${reservation.code}</li>
           <li><strong>Véhicule :</strong> ${populatedReservation.vehicle.brand} ${populatedReservation.vehicle.model} (${populatedReservation.vehicle.year})</li>
-          <li><strong>Service :</strong> ${serviceType === 'self-drive' ? 'Sans chauffeur' : 'Avec chauffeur'}</li>
+          <li><strong>Service :</strong> ${serviceType === 'avec-chauffeur' ? 'Avec chauffeur' : 'Sans chauffeur'}</li>
           <li><strong>Début :</strong> ${startDateFormatted}</li>
           <li><strong>Fin :</strong> ${endDateFormatted}</li>
           <li><strong>Durée :</strong> ${duration} jour(s)</li>
