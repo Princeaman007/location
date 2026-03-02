@@ -1,5 +1,5 @@
 import api from './api';
-import { PriceCalculation } from '../utils/priceCalculator';
+import { RentalPriceCalculation } from '../utils/priceCalculator';
 
 export interface CalculatePriceRequest {
   vehicleId: string;
@@ -11,7 +11,7 @@ export interface CalculatePriceRequest {
 
 export interface CalculatePriceResponse {
   success: boolean;
-  data: PriceCalculation & {
+  data: RentalPriceCalculation & {
     vehicle: {
       id: string;
       brand: string;

@@ -246,7 +246,7 @@ const VehicleFormModal = ({ isOpen, onClose, onSuccess, vehicleToEdit }: Vehicle
     e.stopPropagation();
     setNewImages(prev => prev.filter((_, i) => i !== index));
     setNewImagePreviews(prev => prev.filter((_, i) => i !== index));
-    toast.info('Image retirée');
+    toast('Image retirée');
   };
 
   const handleRemoveExistingImage = (e: React.MouseEvent, imageId: string) => {

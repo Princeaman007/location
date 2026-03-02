@@ -28,6 +28,14 @@ export interface User {
     level: 'bronze' | 'silver' | 'gold' | 'platinum';
     totalSpent: number;
   };
+  chauffeurProfile?: {
+    availability: string;
+    rating: number;
+    experience: number;
+    languages?: string[];
+    specialties?: string[];
+    totalRides?: number;
+  };
 }
 
 export interface AuthState {

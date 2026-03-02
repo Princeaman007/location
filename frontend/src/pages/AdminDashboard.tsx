@@ -99,6 +99,7 @@ interface Reservation {
   payment?: {
     method: string;
     status: string;
+    paidAt?: string;
   };
 }
 
@@ -179,6 +180,9 @@ interface Chauffeur {
     availability: string;
     rating: number;
     experience: number;
+    languages?: string[];
+    specialties?: string[];
+    totalRides?: number;
   };
 }
 
@@ -748,13 +752,13 @@ const AdminDashboard = () => {
                 <div>
                   <h3 className="text-lg font-bold text-dark mb-4">Alertes importantes</h3>
                   <div className="space-y-3">
-                    {stats?.avisEnAttente > 0 && (
+                    {stats && stats.avisEnAttente > 0 && (
                       <div className="flex items-center gap-3 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-lg">
                         <svg className="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.728-.833-2.464 0L4.268 15.5c-.77.833.192 2.5 1.732 2.5z" />
                         </svg>
                         <div className="flex-1">
-                          <p className="font-medium text-yellow-800">{stats.avisEnAttente} avis en attente de modération</p>
+                          <p className="font-medium text-yellow-800">{stats?.avisEnAttente} avis en attente de modération</p>
                           <button 
                             onClick={() => setActiveTab('reviews')}
                             className="text-sm text-yellow-700 underline hover:text-yellow-900"
@@ -764,13 +768,13 @@ const AdminDashboard = () => {
                         </div>
                       </div>
                     )}
-                    {stats?.transfertsEnCours > 0 && (
+                    {stats && stats.transfertsEnCours > 0 && (
                       <div className="flex items-center gap-3 p-4 bg-purple-50 border-l-4 border-purple-400 rounded-lg">
                         <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         <div className="flex-1">
-                          <p className="font-medium text-purple-800">{stats.transfertsEnCours} transferts d'aéroport en cours</p>
+                          <p className="font-medium text-purple-800">{stats?.transfertsEnCours} transferts d'aéroport en cours</p>
                           <button 
                             onClick={() => setActiveTab('airport-transfers')}
                             className="text-sm text-purple-700 underline hover:text-purple-900"

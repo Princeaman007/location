@@ -66,7 +66,7 @@ const VehicleCatalog = () => {
     // Update URL params
     const params = new URLSearchParams();
     Object.entries(newFilters).forEach(([key, val]) => {
-      if (val) params.set(key, val);
+      if (val) params.set(key, String(val));
     });
     setSearchParams(params);
   };
@@ -255,7 +255,7 @@ const VehicleCatalog = () => {
                         setFilters(newFilters);
                         const params = new URLSearchParams();
                         Object.entries(newFilters).forEach(([key, val]) => {
-                          if (val && val !== false) params.set(key, String(val));
+                          if (val) params.set(key, String(val));
                         });
                         setSearchParams(params);
                       }}

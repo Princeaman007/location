@@ -243,7 +243,7 @@ const ChauffeurDashboard = () => {
                   </a>
                   {mission.status === 'confirmed' && (
                     <button 
-                      onClick={() => toast.info('Fonction à venir')}
+                      onClick={() => toast('Fonction à venir')}
                       className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
                     >
                       Démarrer
@@ -397,7 +397,7 @@ const ChauffeurDashboard = () => {
                   </a>
                   {(mission.statut === 'confirme' || mission.statut === 'confirmed') && (
                     <button 
-                      onClick={() => toast.info('Fonction à venir')}
+                      onClick={() => toast('Fonction à venir')}
                       className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm"
                     >
                       Démarrer
