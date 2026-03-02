@@ -62,10 +62,11 @@ export const register = async (req, res) => {
     user.phoneVerificationExpire = Date.now() + 10 * 60 * 1000; // 10 minutes
     await user.save();
 
-    // TODO: Envoyer SMS de vérification
-    // await sendSMS(user.phone, `Votre code de vérification IvoireDrive: ${phoneCode}`);
-
-    sendTokenResponse(user, 201, res);
+    // Ne pas connecter l'utilisateur automatiquement — il doit vérifier son email
+    return res.status(201).json({
+      success: true,
+      message: 'Inscription réussie ! Vérifiez votre email pour activer votre compte.',
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -113,6 +114,15 @@ export const login = async (req, res) => {
       return res.status(401).json({
         success: false,
         message: 'Identifiants invalides',
+      });
+    }
+
+    // Vérifier si l'email a été confirmé
+    if (!user.isEmailVerified) {
+      return res.status(403).json({
+        success: false,
+        message: 'Veuillez vérifier votre email avant de vous connecter. Vérifiez votre boîte mail.',
+        emailNotVerified: true,
       });
     }
 

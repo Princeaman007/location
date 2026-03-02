@@ -1,12 +1,10 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { authService } from '../services/auth.service';
-import { useAuthStore } from '../store/authStore';
 import { Mail } from 'lucide-react';
 
 const Register = () => {
   const navigate = useNavigate();
-  const setAuth = useAuthStore((state) => state.setAuth);
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     nom: '',
@@ -95,13 +93,11 @@ const Register = () => {
         role: formData.role,
       });
 
-      // Afficher message de succès
+      // Afficher message de succès — pas de connexion automatique
       setRegistrationSuccess(true);
-      
-      // Connexion automatique et redirection après 5 secondes
-      setAuth(response.user, response.token);
+      // Redirection vers login après 5 secondes
       setTimeout(() => {
-        navigate(formData.role === 'chauffeur' ? '/chauffeur/dashboard' : '/dashboard');
+        navigate('/login');
       }, 5000);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Erreur lors de l\'inscription');
@@ -134,11 +130,12 @@ const Register = () => {
               </p>
               <p className="text-sm text-blue-800">
                 Nous avons envoyé un email de vérification à <strong>{formData.email}</strong>.
-                Vérifiez votre boîte de réception (et vos spams) pour activer toutes les fonctionnalités.
+                Cliquez sur le lien dans l'email pour <strong>activer votre compte</strong> et pouvoir vous connecter.
+                Vérifiez aussi vos spams.
               </p>
             </div>
             <div className="space-y-2 text-sm text-gray-600">
-              <p>Redirection vers votre tableau de bord...</p>
+              <p>Redirection vers la page de connexion dans 5 secondes...</p>
               <div className="spinner mx-auto"></div>
             </div>
           </div>
