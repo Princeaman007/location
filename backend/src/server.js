@@ -23,6 +23,7 @@ configureCloudinary();
 connectDB();
 
 const app = express();
+app.set('trust proxy', 1);
 
 // Middleware de sécurité
 app.use(helmet());
