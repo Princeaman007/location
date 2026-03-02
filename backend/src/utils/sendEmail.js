@@ -12,21 +12,23 @@ const sendEmail = async (options) => {
       },
     });
   } else {
+    const port = parseInt(process.env.SMTP_PORT, 10) || 465;
+    const secure = port === 465; // true for SSL (465), false for STARTTLS (587)
+
     transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
-      port: parseInt(process.env.SMTP_PORT, 10) || 587,
-      secure: parseInt(process.env.SMTP_PORT, 10) === 465, // true only for port 465
-      requireTLS: true,
+      port,
+      secure,
       auth: {
         user: process.env.SMTP_EMAIL,
         pass: process.env.SMTP_PASSWORD,
       },
       tls: {
-        rejectUnauthorized: false, // needed for some hosting providers
+        rejectUnauthorized: false,
       },
-      connectionTimeout: 10000, // 10 seconds
-      greetingTimeout: 10000,
-      socketTimeout: 15000,
+      connectionTimeout: 15000,
+      greetingTimeout: 15000,
+      socketTimeout: 20000,
     });
   }
 

@@ -46,7 +46,8 @@ export const register = async (req, res) => {
 
     // Envoyer email de vérification
     try {
-      const verificationUrl = `${process.env.FRONTEND_URL}/verify-email/${emailToken}`;
+      const frontendUrl = process.env.FRONTEND_URL || 'https://location-i91q.onrender.com';
+      const verificationUrl = `${frontendUrl}/verify-email/${emailToken}`;
       await sendEmail({
         email: user.email,
         subject: 'Vérification de votre compte DCM groupe agence',
@@ -298,7 +299,8 @@ export const forgotPassword = async (req, res) => {
 
     // Envoyer email avec lien de réinitialisation
     try {
-      const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+      const frontendUrl = process.env.FRONTEND_URL || 'https://location-i91q.onrender.com';
+      const resetUrl = `${frontendUrl}/reset-password/${resetToken}`;
       await sendEmail({
         email: user.email,
         subject: 'Réinitialisation de votre mot de passe DCM groupe agence',
@@ -383,17 +385,18 @@ export const verifyEmail = async (req, res) => {
     if (!user) {
       return res.status(400).json({
         success: false,
-        message: 'Token invalide',
+        message: 'Token invalide ou déjà utilisé',
       });
     }
 
-    user.isEmailVerified = true;
-    user.emailVerificationToken = undefined;
-    await user.save();
+    await User.updateOne(
+      { _id: user._id },
+      { $set: { isEmailVerified: true }, $unset: { emailVerificationToken: '' } }
+    );
 
     res.status(200).json({
       success: true,
-      message: 'Email vérifié avec succès',
+      message: 'Email vérifié avec succès ! Vous pouvez maintenant vous connecter.',
     });
   } catch (error) {
     console.error(error);
