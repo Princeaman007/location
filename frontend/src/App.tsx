@@ -101,14 +101,6 @@ const App: React.FC = () => {
     initAuth();
   }, [token]);
 
-  if (!isInitialized) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-      </div>
-    );
-  }
-
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter
@@ -117,6 +109,11 @@ const App: React.FC = () => {
           v7_relativeSplatPath: true,
         }}
       >
+        {!isInitialized ? (
+          <div className="min-h-screen flex items-center justify-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+          </div>
+        ) : (
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Layout><Home /></Layout>} />
@@ -192,6 +189,7 @@ const App: React.FC = () => {
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        )}
         <Toaster
           position="top-right"
           toastOptions={{
