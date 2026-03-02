@@ -46,6 +46,38 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles }) => {
   const { isAuthenticated, user } = useAuthStore();
+  const [isInitialized, setIsInitialized] = useState(false);
+  const { token, setAuth, logout } = useAuthStore();
+
+  useEffect(() => {
+    const initAuth = async () => {
+      if (token) {
+        try {
+          const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth/me`, {
+            headers: { 'Authorization': `Bearer ${token}` },
+          });
+          if (response.ok) {
+            const data = await response.json();
+            setAuth(data.data, token);
+          } else {
+            logout();
+          }
+        } catch {
+          logout();
+        }
+      }
+      setIsInitialized(true);
+    };
+    initAuth();
+  }, []);
+
+  if (!isInitialized) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+      </div>
+    );
+  }
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
@@ -70,37 +102,6 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 };
 
 const App: React.FC = () => {
-  const { token, setAuth, logout } = useAuthStore();
-  const [isInitialized, setIsInitialized] = useState(false);
-
-  // Vérifier l'authentification au chargement
-  useEffect(() => {
-    const initAuth = async () => {
-      if (token) {
-        try {
-          const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth/me`, {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-            },
-          });
-          
-          if (response.ok) {
-            const data = await response.json();
-            setAuth(data.data, token);
-          } else {
-            logout();
-          }
-        } catch (error) {
-          console.error('Erreur lors de la vérification du token:', error);
-          logout();
-        }
-      }
-      setIsInitialized(true);
-    };
-
-    initAuth();
-  }, [token]);
-
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter
@@ -109,11 +110,6 @@ const App: React.FC = () => {
           v7_relativeSplatPath: true,
         }}
       >
-        {!isInitialized ? (
-          <div className="min-h-screen flex items-center justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-          </div>
-        ) : (
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Layout><Home /></Layout>} />
@@ -189,7 +185,6 @@ const App: React.FC = () => {
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-        )}
         <Toaster
           position="top-right"
           toastOptions={{
