@@ -12,9 +12,28 @@ const Login = () => {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [emailNotVerified, setEmailNotVerified] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+  const [resendMessage, setResendMessage] = useState('');
+
+  const handleResendVerification = async () => {
+    if (!formData.email) return;
+    setResendLoading(true);
+    setResendMessage('');
+    try {
+      await authService.resendVerification(formData.email);
+      setResendMessage('Email de vérification renvoyé ! Vérifiez votre boîte mail.');
+    } catch {
+      setResendMessage("Erreur lors de l'envoi. Réessayez plus tard.");
+    } finally {
+      setResendLoading(false);
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setEmailNotVerified(false);
+    setResendMessage('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -35,7 +54,13 @@ const Login = () => {
         navigate('/dashboard');
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Erreur de connexion');
+      if (err.response?.data?.emailNotVerified) {
+        setEmailNotVerified(true);
+        setError('');
+      } else {
+        setEmailNotVerified(false);
+        setError(err.response?.data?.message || 'Erreur de connexion');
+      }
     } finally {
       setLoading(false);
     }
@@ -57,6 +82,25 @@ const Login = () => {
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
               {error}
+            </div>
+          )}
+
+          {emailNotVerified && (
+            <div className="bg-amber-50 border border-amber-300 text-amber-800 px-4 py-4 rounded-lg text-sm space-y-2">
+              <p className="font-semibold">📧 Email non vérifié</p>
+              <p>Vous devez confirmer votre adresse email avant de vous connecter. Vérifiez votre boîte de réception (et vos spams).</p>
+              {resendMessage ? (
+                <p className="text-green-700 font-medium">{resendMessage}</p>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleResendVerification}
+                  disabled={resendLoading}
+                  className="mt-1 text-primary-600 hover:text-primary-700 font-medium underline disabled:opacity-50"
+                >
+                  {resendLoading ? 'Envoi en cours...' : "Renvoyer l'email de vérification"}
+                </button>
+              )}
             </div>
           )}
 

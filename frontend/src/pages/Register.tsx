@@ -19,6 +19,21 @@ const Register = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+  const [resendMessage, setResendMessage] = useState('');
+
+  const handleResendVerification = async () => {
+    setResendLoading(true);
+    setResendMessage('');
+    try {
+      await authService.resendVerification(formData.email);
+      setResendMessage('Email de vérification renvoyé ! Vérifiez votre boîte mail.');
+    } catch {
+      setResendMessage("Erreur lors de l'envoi. Réessayez plus tard.");
+    } finally {
+      setResendLoading(false);
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const value = e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
@@ -95,10 +110,6 @@ const Register = () => {
 
       // Afficher message de succès — pas de connexion automatique
       setRegistrationSuccess(true);
-      // Redirection vers login après 5 secondes
-      setTimeout(() => {
-        navigate('/login');
-      }, 5000);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Erreur lors de l\'inscription');
     } finally {
@@ -134,10 +145,29 @@ const Register = () => {
                 Vérifiez aussi vos spams.
               </p>
             </div>
-            <div className="space-y-2 text-sm text-gray-600">
-              <p>Redirection vers la page de connexion dans 5 secondes...</p>
-              <div className="spinner mx-auto"></div>
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+              <p className="text-sm text-yellow-800 font-medium">
+                ⚠️ Vous ne pouvez pas vous connecter avant d'avoir cliqué sur le lien dans l'email.
+              </p>
             </div>
+            {resendMessage ? (
+              <p className="text-sm text-green-700 font-medium">{resendMessage}</p>
+            ) : (
+              <button
+                type="button"
+                onClick={handleResendVerification}
+                disabled={resendLoading}
+                className="w-full py-2 px-4 border border-primary-300 text-sm font-medium rounded-lg text-primary-700 bg-white hover:bg-primary-50 transition-colors disabled:opacity-50"
+              >
+                {resendLoading ? 'Envoi en cours...' : "Je n'ai pas reçu l'email → Renvoyer"}
+              </button>
+            )}
+            <button
+              onClick={() => navigate('/login')}
+              className="w-full py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-700 transition-colors"
+            >
+              Aller à la page de connexion (après vérification)
+            </button>
           </div>
         ) : (
           <>

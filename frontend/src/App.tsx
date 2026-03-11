@@ -115,8 +115,8 @@ const App: React.FC = () => {
           <Route path="/" element={<Layout><Home /></Layout>} />
           <Route path="/login" element={<Layout><Login /></Layout>} />
           <Route path="/register" element={<Layout><Register /></Layout>} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password/:resetToken" element={<ResetPassword />} />
+          <Route path="/forgot-password" element={<Layout><ForgotPassword /></Layout>} />
+          <Route path="/reset-password/:resetToken" element={<Layout><ResetPassword /></Layout>} />
           <Route path="/verify-email/:token" element={<VerifyEmail />} />
           <Route path="/vehicles" element={<Layout><VehicleCatalog /></Layout>} />
           <Route path="/vehicles/:id" element={<Layout><VehicleDetail /></Layout>} />

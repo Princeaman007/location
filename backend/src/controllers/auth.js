@@ -278,6 +278,51 @@ export const updatePassword = async (req, res) => {
   }
 };
 
+// @desc    Renvoyer l'email de vérification
+// @route   POST /api/auth/resend-verification
+// @access  Public
+export const resendVerificationEmail = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ success: false, message: 'Email requis' });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      // Réponse générique pour éviter l'énumération des comptes
+      return res.status(200).json({ success: true, message: 'Si ce compte existe, un email de vérification a été envoyé.' });
+    }
+
+    if (user.isEmailVerified) {
+      return res.status(400).json({ success: false, message: 'Cet email est déjà vérifié. Vous pouvez vous connecter.' });
+    }
+
+    // Générer un nouveau token
+    const emailToken = crypto.randomBytes(20).toString('hex');
+    user.emailVerificationToken = crypto.createHash('sha256').update(emailToken).digest('hex');
+    await user.save({ validateBeforeSave: false });
+
+    try {
+      const frontendUrl = process.env.FRONTEND_URL || 'https://location-i91q.onrender.com';
+      const verificationUrl = `${frontendUrl}/verify-email/${emailToken}`;
+      await sendEmail({
+        email: user.email,
+        subject: 'Vérification de votre compte DCM groupe agence',
+        html: verificationEmailTemplate(user.firstName, verificationUrl),
+      });
+    } catch (emailErr) {
+      console.error('Erreur renvoi email vérification:', emailErr);
+      return res.status(500).json({ success: false, message: "Erreur lors de l'envoi de l'email" });
+    }
+
+    return res.status(200).json({ success: true, message: 'Email de vérification renvoyé. Vérifiez votre boîte mail.' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Erreur serveur' });
+  }
+};
+
 // @desc    Mot de passe oublié
 // @route   POST /api/auth/forgot-password
 // @access  Public

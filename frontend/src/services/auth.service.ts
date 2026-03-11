@@ -91,6 +91,12 @@ export const authService = {
     return response.data;
   },
 
+  // Renvoyer l'email de vérification
+  resendVerification: async (email: string) => {
+    const response = await api.post('/auth/resend-verification', { email });
+    return response.data;
+  },
+
   // Vérifier téléphone
   verifyPhone: async (code: string) => {
     const response = await api.post('/auth/verify-phone', { code });

@@ -11,6 +11,7 @@ import {
   resetPassword,
   verifyEmail,
   verifyPhone,
+  resendVerificationEmail,
 } from '../controllers/auth.js';
 import { protect } from '../middleware/auth.js';
 
@@ -35,6 +36,7 @@ router.post('/register', registerValidation, register);
 router.post('/login', loginValidation, login);
 router.post('/google', loginWithGoogle);
 router.post('/forgot-password', forgotPassword);
+router.post('/resend-verification', resendVerificationEmail);
 router.put('/reset-password/:resetToken', resetPassword);
 router.post('/verify-email/:token', verifyEmail);
 router.post('/verify-phone', verifyPhone);
