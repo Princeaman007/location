@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Lock, Eye, EyeOff, CheckCircle } from 'lucide-react';
+import { Lock, Eye, EyeOff, CheckCircle, AlertCircle } from 'lucide-react';
 import api from '../services/api';
 
 const ResetPassword = () => {
-  const { resetToken } = useParams();
+  const { resetToken } = useParams<{ resetToken: string }>();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     password: '',
@@ -15,6 +15,29 @@ const ResetPassword = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+
+  // Si aucun token dans l'URL, rediriger vers "mot de passe oublié"
+  if (!resetToken) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50 flex items-center justify-center py-12 px-4">
+        <div className="max-w-md w-full bg-white p-10 rounded-2xl shadow-xl text-center space-y-6">
+          <div className="mx-auto h-20 w-20 bg-red-100 rounded-full flex items-center justify-center">
+            <AlertCircle className="h-12 w-12 text-red-600" />
+          </div>
+          <h2 className="text-2xl font-bold text-dark">Lien invalide</h2>
+          <p className="text-gray-600">
+            Ce lien de réinitialisation est invalide ou a expiré. Veuillez faire une nouvelle demande.
+          </p>
+          <Link
+            to="/forgot-password"
+            className="inline-block w-full py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-700 transition-colors"
+          >
+            Demander un nouveau lien
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

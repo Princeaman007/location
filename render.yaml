@@ -1,0 +1,26 @@
+services:
+  # ─── Frontend (Static Site) ────────────────────────────────────────────────
+  - type: web
+    name: location-frontend
+    env: static
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: frontend/dist
+    # SPA routing : toutes les URLs inconnues renvoient index.html
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+  # ─── Backend (API) ────────────────────────────────────────────────────────
+  - type: web
+    name: location-backend
+    env: node
+    region: oregon
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && node src/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: FRONTEND_URL
+        # ⚠️  Remplacez par l'URL réelle de votre frontend Render
+        value: https://location-i91q.onrender.com
