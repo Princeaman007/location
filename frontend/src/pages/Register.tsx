@@ -246,22 +246,6 @@ const Register = () => {
                 />
               </div>
 
-              <div>
-                <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">
-                  Type de compte
-                </label>
-                <select
-                  id="role"
-                  name="role"
-                  value={formData.role}
-                  onChange={handleChange}
-                  className="appearance-none relative block w-full px-4 py-3 border border-gray-300 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                >
-                  <option value="client">Client</option>
-                  <option value="chauffeur">Chauffeur</option>
-                </select>
-              </div>
-
               <button
                 type="button"
                 onClick={handleNext}
